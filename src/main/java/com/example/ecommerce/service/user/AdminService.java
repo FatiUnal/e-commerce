@@ -2,9 +2,12 @@ package com.example.ecommerce.service.user;
 
 import com.example.ecommerce.builder.user.AdminBuilder;
 import com.example.ecommerce.config.app.RegexValidation;
+import com.example.ecommerce.dto.AdminResponseDto;
 import com.example.ecommerce.dto.user.AdminRequestDto;
+import com.example.ecommerce.dto.user.AdminUpdateDto;
 import com.example.ecommerce.entity.user.Admin;
 import com.example.ecommerce.exception.BadRequestException;
+import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.exception.ResourceAlreadyExistException;
 import com.example.ecommerce.repository.user.AdminRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +32,7 @@ public class AdminService {
     }
 
     // Admin oluşturma
-    public Admin createAdmin(AdminRequestDto adminRequestDto) {
+    public AdminResponseDto createAdmin(AdminRequestDto adminRequestDto) {
 
         if (adminRequestDto == null)
             throw new BadRequestException("Resource Not Exist");
@@ -43,20 +46,30 @@ public class AdminService {
         if (!RegexValidation.isValidPasswword(adminRequestDto.getPassword()))
             throw new BadRequestException("Invalid Password");
 
-        Admin admin = adminBuilder.AdminRequestDtoToAdmin(adminRequestDto);
+        Admin admin = adminBuilder.adminRequestDtoToAdmin(adminRequestDto);
         admin.setPassword(passwordEncoder.encode(adminRequestDto.getPassword()));
 
-        return adminRepository.save(admin);
+        return adminBuilder.adminToAdminResponseDto(adminRepository.save(admin));
+    }
+
+    // Admin güncelleme
+    public AdminResponseDto updateAdmin(AdminUpdateDto updatedAdmin, int id) {
+        Admin admin = getAdminById(id);
+
+        admin.setFirstName(updatedAdmin.getFirstName());
+        admin.setLastName(updatedAdmin.getLastName());
+
+        return adminBuilder.adminToAdminResponseDto(adminRepository.save(admin)); // veya Exception fırlatılabilir
     }
 
     // Admin'i ID ile bulma
-    public Optional<Admin> getAdminById(Long id) {
-        return adminRepository.findById(id);
+    public Admin getAdminById(int id) {
+        return adminRepository.findById(id).orElseThrow(()-> new NotFoundException("Admin Not Found"));
     }
 
     // Admin'i kullanıcı adı ile bulma
     public Admin getAdminByUsername(String username) {
-        return adminRepository.findByUsername(username);
+        return adminRepository.findByUsername(username).orElseThrow(()-> new NotFoundException("Admin Not Found"));
     }
 
     // Tüm Admin'leri listeleme
@@ -64,14 +77,7 @@ public class AdminService {
         return adminRepository.findAll();
     }
 
-    // Admin güncelleme
-    public Admin updateAdmin(int id, Admin updatedAdmin) {
-        if (adminRepository.existsById(id)) {
-            updatedAdmin.setId(id);
-            return adminRepository.save(updatedAdmin);
-        }
-        return null; // veya Exception fırlatılabilir
-    }
+
 
     // Admin silme
     public boolean deleteAdmin(Long id) {
