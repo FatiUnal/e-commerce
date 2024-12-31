@@ -77,14 +77,16 @@ public class AdminService {
         return adminRepository.findAll();
     }
 
-
-
     // Admin silme
-    public boolean deleteAdmin(Long id) {
-        if (adminRepository.existsById(id)) {
-            adminRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public String deleteAdmin(int id) {
+        Admin admin = getAdminById(id);
+        adminRepository.delete(admin);
+
+        return "Successfully deleted Admin";
+    }
+
+    public AdminResponseDto getAdminResponseById(int adminId) {
+        Admin adminById = getAdminById(adminId);
+        return adminBuilder.adminToAdminResponseDto(adminById);
     }
 }
