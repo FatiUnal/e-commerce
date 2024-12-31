@@ -7,6 +7,7 @@ import com.example.ecommerce.exception.InvalidFormatException;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.service.user.UserService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,11 +84,15 @@ public class AuthenticationService {
     }
     public Claims getClaims(String token) {
         SecretKey secretKey = Keys.hmacShaKeyFor(ApplicationConstant.JWT_SECRET_DEFAULT_VALUE.getBytes(StandardCharsets.UTF_8));
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody(); // Token'in payload kısmını döndürür.
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody(); // Token'in payload kısmını döndürür.
+        }catch (ExpiredJwtException e){
+            throw new InvalidFormatException("Token is expired");
+        }
     }
 
 }
