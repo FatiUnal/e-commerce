@@ -9,6 +9,7 @@ import java.util.Set;
 @DiscriminatorValue("CUSTOMER")
 public class Customer extends User {
     private String address;
+    private boolean active;
 
     public Customer(String firstName, String lastName, String phoneNo, String username, String password, String address) {
         super(firstName, lastName, phoneNo, username, password, Set.of(Roles.ROLE_CUSTOMER));
