@@ -1,39 +1,31 @@
-package com.example.ecommerce.entity.product;
+package com.example.ecommerce.entity.product.image;
 
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "img")
-public class Image {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type",discriminatorType = DiscriminatorType.STRING)
+public abstract class BaseImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String filename;
-    private int orders;
     private String url;
     private LocalDateTime createdDt;
 
     @Enumerated(EnumType.STRING)
     private ImageType type;
 
-    public Image(String filename, String url, ImageType type) {
-        this.filename = filename;
+    public BaseImage(String url, ImageType type) {
         this.url = url;
         this.type = type;
         createdDt = LocalDateTime.now();
     }
 
-    public Image(String filename, String url, ImageType type,int orders) {
-        this.filename = filename;
-        this.orders = orders;
-        this.url = url;
-        this.type = type;
-    }
 
-    public Image() {
+    public BaseImage() {
         createdDt = LocalDateTime.now();
     }
 
@@ -43,22 +35,6 @@ public class Image {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public int getOrders() {
-        return orders;
-    }
-
-    public void setOrders(int orders) {
-        this.orders = orders;
     }
 
     public String getUrl() {
