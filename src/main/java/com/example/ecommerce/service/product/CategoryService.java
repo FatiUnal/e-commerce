@@ -32,7 +32,7 @@ public class CategoryService {
 
 
         Category category = new Category();
-        if (categoryRequestDto.getParentCategoryId() != null) {
+        if (categoryRequestDto.getParentCategoryId() != 0 ) {
             Category parentCategory = findById(categoryRequestDto.getParentCategoryId());
             category.setParentCategory(parentCategory);
         }
@@ -52,8 +52,12 @@ public class CategoryService {
 
 
     public Category findById(int id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category Not Found"));
+        return categoryRepository.
+                findById(id).orElseThrow(() -> new NotFoundException("Category Not Found"));
     }
 
 
+    public Category getCategoryById(Integer categoryId) {
+        return findById(categoryId);
+    }
 }

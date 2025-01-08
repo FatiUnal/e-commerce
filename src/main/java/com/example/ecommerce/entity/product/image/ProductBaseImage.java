@@ -6,20 +6,20 @@ import jakarta.persistence.Entity;
 @Entity(name = "ProductImage")
 @DiscriminatorValue("PRODUCT_IMAGE")
 public class ProductBaseImage extends BaseImage {
-    private int order;
+    private int orders;
 
-    public ProductBaseImage(String url, int order) {
+    public ProductBaseImage(String url, int orders) {
         super(url, ImageType.PRODUCT_IMAGE);
-        this.order = order;
+        this.orders = orders;
     }
 
     public ProductBaseImage() {}
 
-    public int getOrder() {
-        return order;
+    public int getOrders() {
+        return orders;
     }
 
-    public void setOrder(int order) {
-        this.order = order;
+    public void setOrders(int orders) {
+        this.orders = orders;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.ecommerce.entity.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -17,6 +18,7 @@ public class Category {
     // Ebeveyn kategori
     @ManyToOne
     @JoinColumn(name = "parent_id") // Veritabanındaki sütun adı
+    @JsonIgnore
     private Category parentCategory;
 
     // Alt kategoriler

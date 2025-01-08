@@ -14,9 +14,6 @@ public class Product {
     private String description;
     private float price;
     private int quantity;
-    private Category category;
-    private BaseImage coverBaseImage;
-
 
 
 
