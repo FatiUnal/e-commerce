@@ -5,15 +5,15 @@ import jakarta.persistence.Entity;
 
 @Entity(name = "ProductImage")
 @DiscriminatorValue("PRODUCT_IMAGE")
-public class ProductBaseImage extends BaseImage {
+public class ProductImage extends BaseImage {
     private int orders;
 
-    public ProductBaseImage(String url, int orders) {
+    public ProductImage(String url, int orders) {
         super(url, ImageType.PRODUCT_IMAGE);
         this.orders = orders;
     }
 
-    public ProductBaseImage() {}
+    public ProductImage() {}
 
     public int getOrders() {
         return orders;

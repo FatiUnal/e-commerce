@@ -1,5 +1,6 @@
 package com.example.ecommerce.entity.product;
 
+import com.example.ecommerce.entity.product.image.CoverImage;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -14,8 +15,11 @@ public class Category {
     private int id;
     private String name;
     private String description;
-    //private Image coverImage;
-    // Ebeveyn kategori
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cover_image_id")
+    private CoverImage coverImage;
+
     @ManyToOne
     @JoinColumn(name = "parent_id") // Veritabanındaki sütun adı
     @JsonIgnore
@@ -81,5 +85,14 @@ public class Category {
 
     public void setSubCategories(Set<Category> subCategories) {
         this.subCategories = subCategories;
+    }
+
+
+    public CoverImage getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(CoverImage coverImage) {
+        this.coverImage = coverImage;
     }
 }

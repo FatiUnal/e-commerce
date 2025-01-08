@@ -1,5 +1,6 @@
 package com.example.ecommerce.service.product;
 
+import com.example.ecommerce.entity.product.image.BaseImage;
 import com.example.ecommerce.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -65,10 +67,9 @@ public class ImageService {
         }
     }
 
-    public String deleteImage(int imageId) {
-        //Image image = getImageById(imageId);
+    public String deleteImage(BaseImage baseImage) {
 
-        String imageUrl = ""; //image.getUrl();   // http://localhost:8080/api/upload/images/6e07c4f8-a3c6-4c65-92f3-84190b2e1f76.jpg
+        String imageUrl = baseImage.getUrl(); //image.getUrl();   // http://localhost:8080/api/upload/images/6e07c4f8-a3c6-4c65-92f3-84190b2e1f76.jpg
         String path = imageUrl.replace(uploadFileUrl,uploadDir);
 
         System.out.println("path: "+ path);
@@ -81,7 +82,7 @@ public class ImageService {
 
         if (file.delete()) { // Dosya silinir.
             //imageRepository.delete(image);
-            return "deleted: ";//+ image.getUrl();
+            return "deleted";
         } else {
             throw new RuntimeException("Failed to delete file: ");// + image.getUrl());
         }
@@ -90,15 +91,5 @@ public class ImageService {
 
 
 
-    /*
-    public Image getImageById(int imageId) {
-        return imageRepository
-                .findById(imageId)
-                .orElseThrow(()-> new NotFoundException("Image not found"));
-    }
 
-
-    public List<Image> getAllImages() {
-        return imageRepository.findAll();
-    }*/
 }

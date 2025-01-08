@@ -7,6 +7,7 @@ import jakarta.servlet.ServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,6 +34,11 @@ public class CategoryController {
     @GetMapping("/by-id")
     public ResponseEntity<Category> getCategoryById(@RequestParam Integer categoryId) {
         return new ResponseEntity<>(categoryService.getCategoryById(categoryId),HttpStatus.OK);
+    }
+
+    @PutMapping("/cover-image")
+    public ResponseEntity<Category> updateCoverImage(@RequestParam("image") MultipartFile file, @RequestParam("id") int id) {
+        return new ResponseEntity<>(categoryService.updateCoverImage(file,id),HttpStatus.CREATED);
     }
 
 }

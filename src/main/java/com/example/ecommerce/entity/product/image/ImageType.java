@@ -1,5 +1,12 @@
 package com.example.ecommerce.entity.product.image;
 
 public enum ImageType {
-    PRODUCT_COVER_IMAGE,PRODUCT_IMAGE
+    PRODUCT_COVER_IMAGE("product_cover_image"),PRODUCT_IMAGE("product_image"),CATEGORY_IMAGE("category_image");
+    private String value;
+    private ImageType(String value) {
+        this.value = value;
+    }
+    public String getValue() {
+        return value;
+    }
 }
