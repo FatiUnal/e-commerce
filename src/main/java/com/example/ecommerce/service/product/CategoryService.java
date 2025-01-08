@@ -8,6 +8,7 @@ import com.example.ecommerce.entity.product.image.ImageType;
 import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.product.CategoryRepository;
 import com.example.ecommerce.repository.product.Image.CoverImageRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,14 +64,18 @@ public class CategoryService {
     }
 
 
+    @Transactional
     public Category updateCoverImage(MultipartFile file, int id) {
         Category category = findById(id);
+        CoverImage coverImages = category.getCoverImage();
 
         if (category.getCoverImage() != null) {
             String s = imageService.deleteImage(category.getCoverImage());
             if (s.equals("deleted")){
-                System.out.println("deleted category image");
-                coverImageRepository.delete(category.getCoverImage());
+                System.out.println("deleted category image id: "+coverImages.getId());
+                category.setCoverImage(null);
+                categoryRepository.save(category);
+                coverImageRepository.deleteById(coverImages.getId());
             }
         }
 

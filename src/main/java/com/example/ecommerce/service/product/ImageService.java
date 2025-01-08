@@ -2,6 +2,7 @@ package com.example.ecommerce.service.product;
 
 import com.example.ecommerce.entity.product.image.BaseImage;
 import com.example.ecommerce.exception.NotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,6 +68,7 @@ public class ImageService {
         }
     }
 
+    @Transactional
     public String deleteImage(BaseImage baseImage) {
 
         String imageUrl = baseImage.getUrl(); //image.getUrl();   // http://localhost:8080/api/upload/images/6e07c4f8-a3c6-4c65-92f3-84190b2e1f76.jpg
@@ -75,13 +77,17 @@ public class ImageService {
         System.out.println("path: "+ path);
 
         File file = new File(path);
-        // Dosya mevcut değilse hata fırlat
+
         if (!file.exists()) {
             throw new NotFoundException("File not found: " + path);
         }
 
+        // Dosya mevcut değilse hata fırlat
+        if (!file.isFile()) {
+            throw new RuntimeException("Not file: " + path);
+        }
+
         if (file.delete()) { // Dosya silinir.
-            //imageRepository.delete(image);
             return "deleted";
         } else {
             throw new RuntimeException("Failed to delete file: ");// + image.getUrl());

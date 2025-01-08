@@ -29,6 +29,14 @@ public class Category {
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Category> subCategories = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "category_product", // Ortak tablo adı
+            joinColumns = @JoinColumn(name = "category_id"), // Category'nin sütunu
+            inverseJoinColumns = @JoinColumn(name = "product_id") // Product'un sütunu
+    )
+    private Set<Product> products = new HashSet<>();
+
     public Category(int id, String name, String description, Category parentCategory, Set<Category> subCategories) {
         this.id = id;
         this.name = name;
@@ -94,5 +102,13 @@ public class Category {
 
     public void setCoverImage(CoverImage coverImage) {
         this.coverImage = coverImage;
+    }
+
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
     }
 }
