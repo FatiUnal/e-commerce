@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build:
@@ -13,6 +11,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ecommerce
     ports:
       - "8080:8080"
+    volumes:
+      - upload-data:/var/www/upload
     networks:
       - mynetwork
 
@@ -27,6 +27,12 @@ services:
       - "5432:5432"
     networks:
       - mynetwork
+
+
+volumes:
+  upload-data:
+    driver: local
+
 
 networks:
   mynetwork:

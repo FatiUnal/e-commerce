@@ -83,8 +83,9 @@ public class ImageService {
         }
 
         // Dosya mevcut değilse hata fırlat
-        if (!file.isFile()) {
-            throw new RuntimeException("Not file: " + path);
+        if (file.isFile()) {
+
+
         }
 
         if (file.delete()) { // Dosya silinir.

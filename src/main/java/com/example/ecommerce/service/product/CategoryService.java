@@ -69,7 +69,7 @@ public class CategoryService {
         Category category = findById(id);
         CoverImage coverImages = category.getCoverImage();
 
-        if (category.getCoverImage() != null) {
+        if (coverImages != null) {
             String s = imageService.deleteImage(category.getCoverImage());
             if (s.equals("deleted")){
                 System.out.println("deleted category image id: "+coverImages.getId());
@@ -85,6 +85,42 @@ public class CategoryService {
         CoverImage saveCoverImage = coverImageRepository.save(coverImage);
         category.setCoverImage(saveCoverImage);
         return categoryRepository.save(category);
-
     }
+
+    public boolean isParentCategory(Category category,Category parentCategory) {
+        if (category == null || parentCategory == null) {
+            return false; // Null kontrolü
+        }
+
+        // Geçerli kategoriye kadar iterasyon yap
+        Category currentCategory = category.getParentCategory();
+        while (currentCategory != null) {
+            if (currentCategory.equals(parentCategory)) {
+                return true; // Ebeveyn bulundu
+            }
+            currentCategory = currentCategory.getParentCategory(); // Bir üst seviyeye geç
+        }
+
+        return false; // Ebeveyn bulunamadı
+    }
+    public boolean isSubCategory(Category category, Category subCategory) {
+        if (category == null || subCategory == null) {
+            return false; // Null kontrolü
+        }
+
+        // Alt kategorilerde gezinerek kontrol et
+        for (Category sub : category.getSubCategories()) {
+            if (sub.equals(subCategory) || isSubCategory(sub, subCategory)) {
+                return true; // Alt kategori bulundu
+            }
+        }
+
+        return false; // Alt kategori bulunamadı
+    }
+
+
+
+
+
+
 }

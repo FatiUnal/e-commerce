@@ -1,9 +1,13 @@
 package com.example.ecommerce.entity.product;
 
 import com.example.ecommerce.entity.product.image.BaseImage;
+import com.example.ecommerce.entity.product.image.CoverImage;
+import com.example.ecommerce.entity.product.image.ProductImage;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,13 +19,23 @@ public class Product {
     private int id;
     private String productName;
     private String description;
+    private float price;
 
     @ManyToMany(mappedBy = "products") // İlişkinin ters tarafı
     private Set<Category> categories = new HashSet<>();
 
-    public Product(String productName, String description) {
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cover_image_id")
+    private CoverImage coverImage;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "category_id")  // Bu, ProductImage nesnelerinin kategori ile ilişkilendirilmesini sağlar
+    private List<ProductImage> productImages = new ArrayList<>();
+
+    public Product(String productName, String description, float price) {
         this.productName = productName;
         this.description = description;
+        this.price = price;
     }
 
     public Product() {
@@ -57,5 +71,29 @@ public class Product {
 
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public CoverImage getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(CoverImage coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public List<ProductImage> getProductImages() {
+        return productImages;
+    }
+
+    public void setProductImages(List<ProductImage> productImages) {
+        this.productImages = productImages;
     }
 }
