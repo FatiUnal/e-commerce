@@ -30,7 +30,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
             throw new UnAuthorizedException("Lütfen şifrenizi güncelleyin");
         }
 
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+        if (passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new UnAuthorizedException("Wrong Password");
         }
 

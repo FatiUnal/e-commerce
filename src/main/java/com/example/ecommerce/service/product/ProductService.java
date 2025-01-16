@@ -44,6 +44,12 @@ public class ProductService {
     }
 
     public Product createProduct(ProductRequestDto productRequestDto) {
+        if (productRequestDto.getQuantity() <=0)
+            throw new BadRequestException("Quantity must be greater than 0");
+
+        if (productRequestDto.getPrice() <=0)
+            throw new BadRequestException("Price must be greater than 0");
+
         Product product = productBuilder.productRequestDtoToProduct(productRequestDto);
         List<Category> categories = productRequestDto.getCategoryId().stream().map(categoryService::getCategoryById).toList();
         Set<Category> productCategories = new HashSet<>();
@@ -57,6 +63,35 @@ public class ProductService {
         product.setCategories(productCategories);
         return productRepository.save(product);
     }
+
+    public Product updateProduct(int productId,ProductRequestDto productRequestDto) {
+        if (productRequestDto.getQuantity() <=0)
+            throw new BadRequestException("Quantity must be greater than 0");
+        if (productRequestDto.getPrice() <=0)
+            throw new BadRequestException("Price must be greater than 0");
+
+        Product product = findById(productId);
+
+        // sadece sub kategoriye eklenebilir
+        List<Category> categories = productRequestDto.getCategoryId().stream().map(categoryService::getCategoryById).toList();
+        Set<Category> productCategories = new HashSet<>();
+
+        for (int i = 0;i<categories.size();i++) {
+            if (categories.get(i).getSubCategories().isEmpty()) {
+                productCategories.add(categories.get(i));
+            }else
+                throw new BadRequestException("Category is not a sub category: "+categories.get(i).getName());
+        }
+        product.setCategories(productCategories);
+        product.setProductName(productRequestDto.getProductName());
+        product.setDescription(productRequestDto.getDescription());
+        product.setPrice(productRequestDto.getPrice());
+        product.setQuantity(productRequestDto.getQuantity());
+        product.setStatus(product.isStatus());
+
+        return productRepository.save(product);
+    }
+
 
 
     public List<Product> findAll() {
@@ -167,5 +202,9 @@ public class ProductService {
 
     public List<ProductSmallResponseDto> getProductSmall() {
         return productRepository.findAll().stream().map(productBuilder::productToProductSmallResponseDto).collect(Collectors.toList());
+    }
+
+    public List<Product> getProductByQuantity(int quantity) {
+        return productRepository.findAllByQuantityLessThan(quantity);
     }
 }

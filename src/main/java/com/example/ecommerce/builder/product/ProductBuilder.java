@@ -14,7 +14,9 @@ public class ProductBuilder {
         return new Product(
                 productRequestDto.getProductName(),
                 productRequestDto.getDescription(),
-                productRequestDto.getPrice()
+                productRequestDto.getQuantity(),
+                productRequestDto.getPrice(),
+                productRequestDto.isStatus()
         );
     }
 

@@ -1,8 +1,8 @@
 package com.example.ecommerce.entity.product;
 
-import com.example.ecommerce.entity.product.image.BaseImage;
 import com.example.ecommerce.entity.product.image.CoverImage;
 import com.example.ecommerce.entity.product.image.ProductImage;
+import com.example.ecommerce.entity.product.productattr.ProductAttribute;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -19,7 +19,11 @@ public class Product {
     private int id;
     private String productName;
     private String description;
+    private int quantity;
     private float price;
+    private boolean status;
+    @OneToMany
+    private List<ProductAttribute> productAttributes= new ArrayList<>();
 
     @ManyToMany(mappedBy = "products") // İlişkinin ters tarafı
     private Set<Category> categories = new HashSet<>();
@@ -32,10 +36,12 @@ public class Product {
     @JoinColumn(name = "category_id")  // Bu, ProductImage nesnelerinin kategori ile ilişkilendirilmesini sağlar
     private List<ProductImage> productImages = new ArrayList<>();
 
-    public Product(String productName, String description, float price) {
+    public Product(String productName, String description, int quantity, float price, boolean status) {
         this.productName = productName;
         this.description = description;
+        this.quantity = quantity;
         this.price = price;
+        this.status = status;
     }
 
     public Product() {
@@ -95,5 +101,29 @@ public class Product {
 
     public void setProductImages(List<ProductImage> productImages) {
         this.productImages = productImages;
+    }
+
+    public List<ProductAttribute> getProductAttributes() {
+        return productAttributes;
+    }
+
+    public void setProductAttributes(List<ProductAttribute> productAttributes) {
+        this.productAttributes = productAttributes;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

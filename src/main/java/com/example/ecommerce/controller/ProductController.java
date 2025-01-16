@@ -26,9 +26,19 @@ public class ProductController {
         return new ResponseEntity<>(productService.createProduct(productRequestDto), HttpStatus.CREATED);
     }
 
+    @PutMapping
+    public ResponseEntity<Product> updateProduct(@RequestParam int id,@RequestBody ProductRequestDto productRequestDto) {
+        return new ResponseEntity<>(productService.updateProduct(id, productRequestDto), HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         return new ResponseEntity<>(productService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/by-quantity")
+    public ResponseEntity<List<Product>> getProductByQuantity(@RequestParam(defaultValue = "10") int quantity) {
+        return new ResponseEntity<>(productService.getProductByQuantity(quantity),HttpStatus.OK);
     }
 
     @GetMapping("/small")
