@@ -36,6 +36,16 @@ public class ProductController {
         return new ResponseEntity<>(productService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/category")
+    public ResponseEntity<List<ProductSmallResponseDto>> getAllProductsByCategory(@RequestParam int categoryId) {
+        return new ResponseEntity<>(productService.getAllProductsByCategory(categoryId),HttpStatus.OK);
+    }
+
+    @GetMapping("/id")
+    public ResponseEntity<Product> getProductById(@RequestParam int id) {
+        return new ResponseEntity<>(productService.findById(id), HttpStatus.OK);
+    }
+
     @GetMapping("/by-quantity")
     public ResponseEntity<List<Product>> getProductByQuantity(@RequestParam(defaultValue = "10") int quantity) {
         return new ResponseEntity<>(productService.getProductByQuantity(quantity),HttpStatus.OK);
@@ -67,5 +77,9 @@ public class ProductController {
         return new ResponseEntity<>(productService.deleteProductImage(prodId,imagesId),HttpStatus.OK);
     }
 
+    @PutMapping("/category")
+    public ResponseEntity<Product> updateCategory(@RequestParam int productId, @RequestParam List<Integer> categoryIds) {
+        return new ResponseEntity<>(productService.updateCategory(productId,categoryIds),HttpStatus.OK);
+    }
 
 }

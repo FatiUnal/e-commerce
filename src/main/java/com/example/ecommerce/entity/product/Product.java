@@ -3,6 +3,7 @@ package com.example.ecommerce.entity.product;
 import com.example.ecommerce.entity.product.image.CoverImage;
 import com.example.ecommerce.entity.product.image.ProductImage;
 import com.example.ecommerce.entity.product.productattr.ProductAttribute;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class Product {
     private List<ProductAttribute> productAttributes= new ArrayList<>();
 
     @ManyToMany(mappedBy = "products") // İlişkinin ters tarafı
+    @JsonIgnore
     private Set<Category> categories = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)

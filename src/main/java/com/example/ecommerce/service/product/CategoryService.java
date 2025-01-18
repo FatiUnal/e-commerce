@@ -49,6 +49,13 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    public Category save(Category category) {
+        if (category.getName() == null || category.getName().isBlank()) {
+            throw new IllegalArgumentException("Category name is required.");
+        }
+        return categoryRepository.save(category);
+    }
+
     public List<Category> findPArentCategories() {
         return categoryRepository.findAllByParentCategoryIsNull();
     }

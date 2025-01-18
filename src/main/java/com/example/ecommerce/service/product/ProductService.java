@@ -89,6 +89,11 @@ public class ProductService {
         product.setQuantity(productRequestDto.getQuantity());
         product.setStatus(product.isStatus());
 
+        productCategories.forEach(category -> {
+            category.getProducts().add(product);
+            categoryService.save(category);
+        });
+
         return productRepository.save(product);
     }
 
@@ -128,7 +133,6 @@ public class ProductService {
 
     public Product updateProductImage(MultipartFile[] files, int id) {
         Product product = findById(id);
-
         try {
             String path = ImageType.PRODUCT_IMAGE.getValue()+"/"+product.getId()+"/";
             for (MultipartFile file : files) {
@@ -206,5 +210,31 @@ public class ProductService {
 
     public List<Product> getProductByQuantity(int quantity) {
         return productRepository.findAllByQuantityLessThan(quantity);
+    }
+
+    public List<ProductSmallResponseDto> getAllProductsByCategory(int categoryId) {
+        Category category = categoryService.findById(categoryId);
+        return productRepository.findAllByCategories(category).stream().map(productBuilder::productToProductSmallResponseDto).collect(Collectors.toList());
+    }
+
+    public Product updateCategory(int productId, List<Integer> categoryIds) {
+
+        Product product = findById(productId);
+
+        List<Category> categories = categoryIds.stream().map(categoryService::getCategoryById).toList();
+        Set<Category> productCategories = new HashSet<>();
+
+        for (int i = 0;i<categories.size();i++) {
+            if (categories.get(i).getSubCategories().isEmpty()) {
+                productCategories.add(categories.get(i));
+            }else
+                throw new BadRequestException("Category is not a sub category: "+categories.get(i).getName());
+        }
+        productCategories.forEach(category -> {
+            category.getProducts().add(product);
+            categoryService.save(category);
+        });
+
+        return product;
     }
 }
