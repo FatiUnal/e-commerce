@@ -9,8 +9,8 @@ import java.util.Set;
 @DiscriminatorValue("ADMIN")
 public class Admin extends User {
 
-    public Admin(String firstName, String lastName, String phoneNo, String username, String password) {
-        super(firstName, lastName, phoneNo, username, password, Set.of(Roles.ROLE_ADMIN));
+    public Admin(String firstName, String lastName, String phoneNo, String username, String password,boolean enabled,boolean accountNonLocked) {
+        super(firstName, lastName, phoneNo, username, password, Set.of(Roles.ROLE_ADMIN),enabled,accountNonLocked);
     }
 
     public Admin() {

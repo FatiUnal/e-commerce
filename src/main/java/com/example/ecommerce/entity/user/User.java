@@ -2,6 +2,7 @@ package com.example.ecommerce.entity.user;
 
 
 import jakarta.persistence.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -10,7 +11,8 @@ import java.util.Set;
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type",discriminatorType = DiscriminatorType.STRING)
-public abstract class  User {
+public abstract class  User implements UserDetails {
+
 
     @Id
     @GeneratedValue
@@ -32,13 +34,22 @@ public abstract class  User {
     @Enumerated(EnumType.STRING)
     private Set<Roles> authorities;
 
-    public User(String firstName, String lastName, String phoneNo, String username, String password, Set<Roles> authorities) {
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean enabled;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean accountNonLocked;
+
+
+    public User(String firstName, String lastName, String phoneNo, String username, String password, Set<Roles> authorities, boolean enabled, boolean accountNonLocked) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNo = phoneNo;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
+        this.enabled = enabled;
+        this.accountNonLocked = accountNonLocked;
     }
 
     public User() {
@@ -106,5 +117,22 @@ public abstract class  User {
 
     public void setAuthorities(Set<Roles> authorities) {
         this.authorities = authorities;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
     }
 }

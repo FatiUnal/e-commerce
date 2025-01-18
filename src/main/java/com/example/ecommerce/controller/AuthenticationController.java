@@ -1,6 +1,7 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.AuthRequestDto;
+import com.example.ecommerce.entity.user.User;
 import com.example.ecommerce.service.AuthenticationService;
 import com.example.ecommerce.service.user.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,11 @@ public class AuthenticationController {
     @GetMapping("/expired")
     public ResponseEntity<Boolean> authExpired(HttpServletRequest request){
         return new ResponseEntity<>(authenticationService.isTokenExpired(request), HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<User> getUser(){
+        return new ResponseEntity<>(authenticationService.getUser(),HttpStatus.OK);
     }
 
 

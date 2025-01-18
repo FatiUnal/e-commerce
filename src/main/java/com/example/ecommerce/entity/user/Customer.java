@@ -2,6 +2,8 @@ package com.example.ecommerce.entity.user;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.util.Set;
 
@@ -9,11 +11,13 @@ import java.util.Set;
 @DiscriminatorValue("CUSTOMER")
 public class Customer extends User {
     private String address;
-    private boolean active;
 
-    public Customer(String firstName, String lastName, String phoneNo, String username, String password, String address) {
-        super(firstName, lastName, phoneNo, username, password, Set.of(Roles.ROLE_CUSTOMER));
-        this.address = address;
+    @Enumerated(EnumType.STRING)
+    private RegisterType registerType;
+
+    public Customer(String firstName, String lastName, String username, String password, boolean enabled, boolean accountNonLocked, RegisterType registerType) {
+        super(firstName, lastName, null, username, password, Set.of(Roles.ROLE_CUSTOMER),enabled,accountNonLocked);
+        this.registerType = registerType;
     }
 
     public Customer() {}
@@ -24,5 +28,13 @@ public class Customer extends User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public RegisterType getRegisterType() {
+        return registerType;
+    }
+
+    public void setRegisterType(RegisterType registerType) {
+        this.registerType = registerType;
     }
 }

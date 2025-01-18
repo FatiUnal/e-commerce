@@ -37,7 +37,7 @@ public class AdminService {
         if (adminRequestDto == null)
             throw new BadRequestException("Resource Not Exist");
 
-        if (userService.isExistUser(adminRequestDto.getUsername()))
+        if (userService.isExistUserByUsername(adminRequestDto.getUsername()))
             throw new ResourceAlreadyExistException("User already exists");
 
         if (!RegexValidation.isValidEmail(adminRequestDto.getUsername()))

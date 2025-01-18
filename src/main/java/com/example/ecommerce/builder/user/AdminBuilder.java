@@ -13,7 +13,9 @@ public class AdminBuilder {
                 adminRequestDto.getLastName(),
                 adminRequestDto.getPhoneNo(),
                 adminRequestDto.getUsername(),
-                adminRequestDto.getPassword()
+                adminRequestDto.getPassword(),
+                false,
+                false
         );
     }
 

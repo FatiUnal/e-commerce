@@ -2,8 +2,12 @@ package com.example.ecommerce.config;
 
 import com.example.ecommerce.config.provider.emailpassword.CustomUserDetailService;
 import com.example.ecommerce.config.provider.emailpassword.UsernamePasswordAuthenticationProvider;
+import com.example.ecommerce.exception.authentication.CustomAuthenticationEntryPoint;
+import com.example.ecommerce.filter.JwtValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -15,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -25,9 +30,11 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
     private final CustomUserDetailService userDetailsService;
+    private final JwtValidationFilter jwtValidationFilter;
 
-    public SecurityConfig(CustomUserDetailService userDetailsService) {
+    public SecurityConfig(CustomUserDetailService userDetailsService, JwtValidationFilter jwtValidationFilter) {
         this.userDetailsService = userDetailsService;
+        this.jwtValidationFilter = jwtValidationFilter;
     }
 
     @Bean
@@ -35,7 +42,11 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(x -> x.anyRequest().permitAll())
+                .authorizeHttpRequests(x -> x
+                        .requestMatchers(HttpMethod.GET,"/api/v1/auth/user").authenticated()
+                        .anyRequest().permitAll())
+                .exceptionHandling(x -> x.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
+                .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .build();
     }

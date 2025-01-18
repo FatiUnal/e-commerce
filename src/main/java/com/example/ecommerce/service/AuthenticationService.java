@@ -3,20 +3,26 @@ package com.example.ecommerce.service;
 import com.example.ecommerce.config.app.RegexValidation;
 import com.example.ecommerce.constant.ApplicationConstant;
 import com.example.ecommerce.dto.AuthRequestDto;
+import com.example.ecommerce.entity.user.User;
+import com.example.ecommerce.exception.BadRequestException;
 import com.example.ecommerce.exception.InvalidFormatException;
 import com.example.ecommerce.exception.NotFoundException;
+import com.example.ecommerce.exception.UnAuthorizedException;
 import com.example.ecommerce.service.user.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -30,9 +36,11 @@ import static java.security.KeyRep.Type.SECRET;
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private static final String BEARER_PREFIX = "Bearer ";
+    private final UserService userService;
 
-    public AuthenticationService(AuthenticationManager authenticationManager) {
+    public AuthenticationService(AuthenticationManager authenticationManager, UserService userService) {
         this.authenticationManager = authenticationManager;
+        this.userService = userService;
     }
 
     public ResponseEntity<String> authentication(AuthRequestDto authRequest) {
@@ -95,4 +103,12 @@ public class AuthenticationService {
         }
     }
 
+    public User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            return userService.getUser(authentication.getName());
+        }else
+            throw new UnAuthorizedException("USer not authorized");
+
+    }
 }
