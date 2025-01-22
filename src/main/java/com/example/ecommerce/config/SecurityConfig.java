@@ -55,7 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/api/v1/auth/user").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/home", true)  // Başarıyla giriş yapıldığında yönlendirme
+                        .successHandler(new OAuth2LoginSuccessHandler())
                         .failureUrl("/login?error")      // Giriş başarısız olduğunda yönlendirme
                 )
                 .exceptionHandling(x -> x.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))

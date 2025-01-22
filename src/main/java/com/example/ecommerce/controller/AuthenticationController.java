@@ -39,13 +39,4 @@ public class AuthenticationController {
         return new ResponseEntity<>(authenticationService.getUser(),HttpStatus.OK);
     }
 
-
-    @GetMapping("/login-success")
-    public String loginSuccess(@AuthenticationPrincipal OAuth2User principal) {
-        // Process user information and customize your logic
-        System.out.println("giriş yapıldı: "+ principal.getName());
-        return "asd";
-    }
-
-
 }
