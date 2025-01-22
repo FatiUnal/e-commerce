@@ -3,6 +3,22 @@ spring:
   application:
     name: e-commerce
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 909493653302-4291f26lubjrt7urqrhmks2ck5mnckm2.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com
+
+  # http://localhost:8080/oauth2/authorization/google
   # Datasource Configuration (Veritabanı Bağlantısı)
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ecommerce}
