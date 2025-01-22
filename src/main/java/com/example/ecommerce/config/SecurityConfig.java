@@ -41,6 +41,7 @@ public class SecurityConfig {
     private final CustomUserDetailService userDetailsService;
     private final JwtValidationFilter jwtValidationFilter;
 
+
     public SecurityConfig(CustomUserDetailService userDetailsService, JwtValidationFilter jwtValidationFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtValidationFilter = jwtValidationFilter;
