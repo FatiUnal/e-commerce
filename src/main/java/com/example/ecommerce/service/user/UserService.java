@@ -5,6 +5,8 @@ import com.example.ecommerce.exception.NotFoundException;
 import com.example.ecommerce.repository.user.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -23,5 +25,8 @@ public class UserService {
 
     public User getUser(String username) {
         return userRepository.findByUsername(username).orElseThrow(()->new NotFoundException("User not found"));
+    }
+    public Optional<User> getUserOrNull(String username) {
+        return userRepository.findByUsername(username);
     }
 }

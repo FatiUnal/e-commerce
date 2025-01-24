@@ -1,6 +1,7 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.product.CategoryRequestDto;
+import com.example.ecommerce.dto.product.CategorySmallDto;
 import com.example.ecommerce.entity.product.Category;
 import com.example.ecommerce.service.product.CategoryService;
 import jakarta.servlet.ServletResponse;
@@ -28,7 +29,7 @@ public class CategoryController {
     }
 
     @GetMapping("/parent")
-    public ResponseEntity<List<Category>> getParentCategory() {
+    public ResponseEntity<List<CategorySmallDto>> getParentCategory() {
         return new ResponseEntity<>(categoryService.findPArentCategories() , HttpStatus.OK);
     }
     @GetMapping("/by-id")
@@ -39,6 +40,11 @@ public class CategoryController {
     @PutMapping("/cover-image")
     public ResponseEntity<Category> updateCoverImage(@RequestParam("image") MultipartFile file, @RequestParam("id") int id) {
         return new ResponseEntity<>(categoryService.updateCoverImage(file,id),HttpStatus.CREATED);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteCategory(@RequestParam Integer categoryId) {
+        return new ResponseEntity<>(categoryService.delete(categoryId),HttpStatus.OK);
     }
 
 }

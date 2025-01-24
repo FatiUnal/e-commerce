@@ -19,6 +19,7 @@ public class Category {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cover_image_id")
     private CoverImage coverImage;
+    private String href;
 
     @ManyToOne
     @JoinColumn(name = "parent_id") // Veritabanındaki sütun adı
@@ -37,17 +38,19 @@ public class Category {
     )
     private Set<Product> products = new HashSet<>();
 
-    public Category(int id, String name, String description, Category parentCategory, Set<Category> subCategories) {
+    public Category(int id, String name, String description, String href, Category parentCategory, Set<Category> subCategories) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.href = href;
         this.parentCategory = parentCategory;
         this.subCategories = subCategories;
     }
 
-    public Category(String name, String description, Category parentCategory, Set<Category> subCategories) {
+    public Category(String name, String description, String href, Category parentCategory, Set<Category> subCategories) {
         this.name = name;
         this.description = description;
+        this.href = href;
         this.parentCategory = parentCategory;
         this.subCategories = subCategories;
     }
@@ -110,5 +113,13 @@ public class Category {
 
     public void setProducts(Set<Product> products) {
         this.products = products;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
     }
 }

@@ -7,6 +7,7 @@ import com.example.ecommerce.exception.authentication.CustomAuthenticationEntryP
 import com.example.ecommerce.filter.JwtValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,11 +41,13 @@ import java.util.List;
 public class SecurityConfig {
     private final CustomUserDetailService userDetailsService;
     private final JwtValidationFilter jwtValidationFilter;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
 
-    public SecurityConfig(CustomUserDetailService userDetailsService, JwtValidationFilter jwtValidationFilter) {
+    public SecurityConfig(CustomUserDetailService userDetailsService, JwtValidationFilter jwtValidationFilter,@Lazy OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) {
         this.userDetailsService = userDetailsService;
         this.jwtValidationFilter = jwtValidationFilter;
+        this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler;
     }
 
     @Bean
@@ -56,8 +59,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/api/v1/auth/user").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler(new OAuth2LoginSuccessHandler())
-                        .failureUrl("/login?error")      // Giriş başarısız olduğunda yönlendirme
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureUrl("http://localhost:5173/login?error")      // Giriş başarısız olduğunda yönlendirme
                 )
                 .exceptionHandling(x -> x.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)

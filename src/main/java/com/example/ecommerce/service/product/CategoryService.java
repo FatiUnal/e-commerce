@@ -2,6 +2,7 @@ package com.example.ecommerce.service.product;
 
 import com.example.ecommerce.builder.product.CategoryBuilder;
 import com.example.ecommerce.dto.product.CategoryRequestDto;
+import com.example.ecommerce.dto.product.CategorySmallDto;
 import com.example.ecommerce.entity.product.Category;
 import com.example.ecommerce.entity.product.image.CoverImage;
 import com.example.ecommerce.entity.product.image.ImageType;
@@ -13,18 +14,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ImageService imageService;
     private final CoverImageRepository coverImageRepository;
+    private final CategoryBuilder categoryBuilder;
 
 
-    public CategoryService(CategoryRepository categoryRepository, ImageService imageService, CoverImageRepository coverImageRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ImageService imageService, CoverImageRepository coverImageRepository, CategoryBuilder categoryBuilder) {
         this.categoryRepository = categoryRepository;
         this.imageService = imageService;
         this.coverImageRepository = coverImageRepository;
+        this.categoryBuilder = categoryBuilder;
     }
 
 
@@ -45,6 +49,7 @@ public class CategoryService {
         }
 
         category.setName(categoryRequestDto.getName());
+        category.setHref(categoryRequestDto.getHref());
         category.setDescription(categoryRequestDto.getDescription());
         return categoryRepository.save(category);
     }
@@ -56,8 +61,12 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public List<Category> findPArentCategories() {
-        return categoryRepository.findAllByParentCategoryIsNull();
+    public List<CategorySmallDto> findPArentCategories() {
+        List<Category> allByParentCategoryIsNull = categoryRepository.findAllByParentCategoryIsNull();
+        return allByParentCategoryIsNull.stream()
+                .map(categoryBuilder::buildCategory)
+                .collect(Collectors.toList());
+
     }
 
     public Category findById(int id) {
@@ -126,8 +135,34 @@ public class CategoryService {
     }
 
 
+    public String delete(Integer categoryId) {
+        // Kategori var mı diye kontrol et
+        Category category = findById(categoryId);
 
+        // Alt kategorileri recursive olarak sil
+        deleteCategoryRecursively(category);
 
+        return "Category and its subcategories successfully deleted.";
+    }
 
+    private void deleteCategoryRecursively(Category category) {
+        // Alt kategoriler var mı kontrol et
+        if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
+            for (Category subCategory : category.getSubCategories()) {
+                // Alt kategorileri recursive olarak sil
+                deleteCategoryRecursively(subCategory);
+            }
+        }
 
+        // Kapak resmini sil
+        if (category.getCoverImage() != null) {
+            imageService.deleteImage(category.getCoverImage());
+        }
+
+        // Ürün ilişkilerini sıfırla
+        category.setProducts(null);
+
+        // Ana kategoriyi veritabanından sil
+        categoryRepository.delete(category);
+    }
 }

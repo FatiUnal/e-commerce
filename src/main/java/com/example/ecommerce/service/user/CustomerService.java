@@ -5,6 +5,7 @@ import com.example.ecommerce.config.app.RegexValidation;
 import com.example.ecommerce.dto.user.CustomerRequestDto;
 import com.example.ecommerce.entity.user.Customer;
 import com.example.ecommerce.entity.user.RegisterType;
+import com.example.ecommerce.entity.user.User;
 import com.example.ecommerce.entity.user.auth.Otp;
 import com.example.ecommerce.exception.BadRequestException;
 import com.example.ecommerce.exception.InvalidFormatException;
@@ -20,10 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class CustomerService {
@@ -82,6 +80,18 @@ public class CustomerService {
             return "success sms";
         }else
             throw new BadRequestException("Sms Not Send");
+
+    }
+
+    public Customer createCustomerWithGoogle(String name,String username){
+        if (!RegexValidation.isValidEmail(username))
+            throw new InvalidFormatException("Invalid email address");
+
+        if (userService.isExistUserByUsername(username))
+            throw new ResourceAlreadyExistException("Username already exists");
+
+        Customer customer = new Customer(name,username,RegisterType.GOOGLE);
+         return customerRepository.save(customer);
 
     }
 
@@ -197,6 +207,10 @@ public class CustomerService {
     public Customer findByUsername(String username) {
         return customerRepository.findByUsername(username).orElseThrow(()-> new NotFoundException("Customer not found"));
     }
+     public Optional<Customer> findByUsernameOrNull(String username) {
+        return customerRepository.findByUsername(username);
+    }
+
 
     public Customer findByPhoneNo(String phoneNo) {
         return customerRepository.findByPhoneNo(phoneNo).orElseThrow(()-> new NotFoundException("Customer not found"));
@@ -217,5 +231,24 @@ public class CustomerService {
         customer.setAccountNonLocked(false);
         customerRepository.save(customer);
         return "Customer is inActive";
+    }
+
+    public Optional<Customer> findCustomer(String username) {
+        Optional<User> user = userService.getUserOrNull(username); // eğer kullanıcı mevcutsa kullanıcıyı çeker
+        if (user.isPresent() && user.get() instanceof Customer) { // Customer olup olmadığını kontrol eder
+            return findByUsernameOrNull(username); // Customer ise kullanıcıyı döner
+        } else {
+            throw new InvalidFormatException("Invalid user"); // Aksi halde hata fırlatır
+        }
+    }
+
+
+    public boolean isExistUser(String username) {
+        return userService.isExistUserByUsername(username);
+    }
+
+
+    public boolean isExistCustomer(String email) {
+        return customerRepository.existsByUsername(email);
     }
 }

@@ -20,6 +20,12 @@ public class Customer extends User {
         this.registerType = registerType;
     }
 
+    public Customer(String firstName, String username , RegisterType registerType) {
+        super(firstName,null,null,username,null,Set.of(Roles.ROLE_CUSTOMER),true,true);
+        this.registerType = registerType;
+
+    }
+
     public Customer() {}
 
     public String getAddress() {
